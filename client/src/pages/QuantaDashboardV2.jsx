@@ -304,26 +304,79 @@ const QuantaDashboardV2 = () => {
   const handleQrCode = async(file) => {
     const link = file.webViewLink;
     toast.info(
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <h2>QR Code for file</h2>
-          <br />
-          <div  style={{
-              padding: "8px",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
+        <div style={{ 
+          textAlign: "center", 
+          padding: "20px",
+          backgroundColor: "white",
+          borderRadius: "12px",
+          boxShadow: "0 5px 20px rgba(0, 0, 0, 0.15)",
+          maxWidth: "350px",
+          margin: "0 auto"
+        }}>
+          <h2 style={{ 
+            margin: "0 0 15px 0", 
+            color: "#4361ee", 
+            fontSize: "18px",
+            fontWeight: "600" 
+          }}>QR Code for {file.name}</h2>
+          <div style={{
+              padding: "15px",
+              border: "2px solid #f0f2f5",
+              borderRadius: "10px",
               width: "100%",
-              marginBottom: "10px",
+              marginBottom: "15px",
+              backgroundColor: "#ffffff",
+              display: "flex",
+              justifyContent: "center"
             }}
           >
             {link && (
-            <QRCodeCanvas value={link} size={150} bgColor="#ffffff" fgColor="#000000" />
+              <QRCodeCanvas 
+                value={link} 
+                size={180} 
+                bgColor="#ffffff" 
+                fgColor="#000000"
+                level="H"
+                includeMargin={true}
+              />
             )}
-          </div>  
+          </div>
+          <button 
+            onClick={() => {
+              navigator.clipboard.writeText(link);
+              toast.success("Link copied to clipboard!", {
+                position: "bottom-center",
+                autoClose: 2000
+              });
+            }}
+            style={{
+              backgroundColor: "#4361ee",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 16px",
+              fontSize: "14px",
+              fontWeight: "500",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              margin: "0 auto",
+              transition: "background-color 0.2s"
+            }}
+          >
+            <Clipboard size={16} />
+            Copy Link
+          </button>
         </div>,
-        { icon: false,
-          position: "top-center",
-          autoClose: true,
+        { 
+          icon: false,
+          position: "bottom-center",
+          autoClose: false,
           closeOnClick: false,
+          className: "qr-toast-container",
+          style: { maxWidth: "400px" }
         }
     )
   }

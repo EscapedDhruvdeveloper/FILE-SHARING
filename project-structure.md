@@ -28,6 +28,4 @@ quanta-share/
 └── README.md               # Project documentation
 ```
 
-</qodoArtifact>
-
 Now, let's implement the backend components first:

@@ -1,0 +1,171 @@
+/* File Share Component Styles */
+.file-share-container {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  width: 100%;
+}
+
+.share-toggle-btn {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.share-toggle-btn:hover {
+  background-color: #3367d6;
+}
+
+.share-options-panel {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.share-methods, .share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.share-method-btn, .share-btn {
+  padding: 8px 12px;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.share-method-btn:hover, .share-btn:hover {
+  background-color: #d0d0d0;
+}
+
+.share-method-btn.active, .share-btn.active {
+  background-color: #4285f4;
+  color: white;
+}
+
+.share-method-btn:disabled, .share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.email-share-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.email-input-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.email-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.send-email-btn {
+  padding: 8px 12px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.send-email-btn:disabled {
+  background-color: #a1c0fa;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  text-align: center;
+  margin: 10px 0;
+  color: #666;
+}
+
+.share-result {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.link-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.link-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.copy-btn {
+  padding: 8px 12px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.qr-image {
+  max-width: 200px;
+  border: 1px solid #eee;
+  padding: 5px;
+  background-color: white;
+}
+
+.download-qr-btn {
+  padding: 8px 12px;
+  background-color: #4285f4;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.email-sent-message {
+  margin-top: 10px;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .share-methods, .share-buttons {
+    flex-direction: column;
+  }
+  
+  .email-input-container {
+    flex-direction: column;
+  }
+}

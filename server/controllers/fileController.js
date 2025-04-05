@@ -11,7 +11,7 @@ const axios = require('axios');
 
 
 
-const KEYFILEPATH = path.join(__dirname, "cred.json");
+const KEYFILEPATH = path.join(__dirname, '../google-drive_services/cred.json');
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
 
 const multer = require('multer');
@@ -169,8 +169,8 @@ exports.shareFile = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
-    // Generate download URL
-    const downloadUrl = `${req.protocol}://${req.get('host')}/api/files/download/${file.shortId}`;
+    // Generate download URL - use the webContentLink directly
+    const downloadUrl = file.webContentLink;
 
     // Record sharing method
     const shareRecord = {
@@ -186,19 +186,19 @@ exports.shareFile = async (req, res) => {
     if (method === 'qrcode') {
       const qrCodeDataUrl = await QRCode.toDataURL(downloadUrl);
       return res.json({ 
+        success: true,
         message: 'QR code generated successfully',
         qrCode: qrCodeDataUrl,
         downloadUrl
       });
     } 
     else if (method === 'email' && recipient) {
-      // Set up email transporter (configure with your SMTP details in production)
+      // Set up email transporter
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.mailtrap.io',
-        port: process.env.SMTP_PORT || 2525,
+        service: "gmail",
         auth: {
-          user: process.env.SMTP_USER || 'your_mailtrap_user',
-          pass: process.env.SMTP_PASS || 'your_mailtrap_password'
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
         }
       });
 
@@ -206,7 +206,7 @@ exports.shareFile = async (req, res) => {
 
       // Send email
       await transporter.sendMail({
-        from: `"Quanta Share" <noreply@quantashare.com>`,
+        from: `"Quanta Share" <${process.env.EMAIL_USER}>`,
         to: recipient,
         subject: `${user.username} shared a file with you`,
         html: `
@@ -219,12 +219,14 @@ exports.shareFile = async (req, res) => {
       });
 
       return res.json({ 
+        success: true,
         message: 'File shared via email successfully',
         downloadUrl
       });
     } 
     else if (method === 'link') {
       return res.json({ 
+        success: true,
         message: 'File link generated successfully',
         downloadUrl
       });
@@ -232,38 +234,44 @@ exports.shareFile = async (req, res) => {
 
     res.status(400).json({ message: 'Invalid sharing method or missing recipient' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Share error:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-// @desc    Download a file by short ID
-// @route   GET /api/files/download/:shortId
+// @desc    Download a file by ID
+// @route   GET /api/files/download/:fileId
 exports.downloadFile = async (req, res) => {
   try {
-    // console.log("req : ", req)
     const fileid = req.params.fileId;
-    // console.log(`Download request for fileId: ${fileid}`);
+    console.log(`Download request for fileId: ${fileid}`);
 
-    const file = await File.findOne({fileID : fileid});
+    const file = await File.findOne({fileID: fileid});
 
     if (!file) {
       return res.status(404).json({ error: "File not found" });
     }
-    // console.log("file from db : ", file);
+    console.log("File found in database:", file.filename);
 
-   file.downloadCount = file.downloadCount + 1;
-   await file.save();
+    // Increment download count
+    file.downloadCount = file.downloadCount + 1;
+    await file.save();
 
-    return res.status(200).json({ downloadLink: file.webContentLink });
-    
+    // Instead of redirecting, return a JSON response with the download link
+    // The frontend will handle opening this in a new tab
+    return res.status(200).json({ 
+      success: true, 
+      downloadLink: file.webContentLink,
+      fileName: file.originalName
+    });
   } catch (err) {
     console.error('Download error:', err.message);
-    res.status(500).send('Server error during download');
+    res.status(500).json({ error: 'Server error during download', details: err.message });
   }
 };
 
 
+// Configure email transporter for file sharing
 const transporter = nodemailer.createTransport({
   service: "gmail", // Or your SMTP provider
   auth: {

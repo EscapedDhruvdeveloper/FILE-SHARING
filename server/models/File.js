@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const shortid = require('shortid');
 
-const FileSchema = new mongoose.Schema({
-  fileID: { //  Use 'id' as a String to store Google Drive ID
+const FileSchema = new Schema({
+  fileID: {
     type: String,
     required: true,
-    unique: true, //  Ensure uniqueness
-    index: true    //  For efficient querying
-   },
+    unique: true,
+    index: true
+  },
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
@@ -48,7 +49,9 @@ const FileSchema = new mongoose.Schema({
       enum: ['link', 'qrcode', 'email'],
       required: true
     },
-    recipient: String,
+    recipient: {
+      type: String
+    },
     sharedAt: {
       type: Date,
       default: Date.now
@@ -58,13 +61,13 @@ const FileSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  webViewLink: { // Add webViewLink
-      type: String,
-      required: true  //  or adjust as needed
+  webViewLink: {
+    type: String,
+    required: true
   },
-  webContentLink: { // Add webContentLink
-      type: String,
-      required: true // or adjust as needed
+  webContentLink: {
+    type: String,
+    required: true
   }
 });
 

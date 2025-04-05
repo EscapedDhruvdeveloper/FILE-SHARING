@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { FiUploadCloud, FiFile, FiX } from 'react-icons/fi';
 import axios from 'axios';
@@ -14,6 +14,14 @@ const QuantaFileUploader = ({ onFileUploaded }) => {
   const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB in bytes
   
   const fileInputRef = useRef(null);
+  const isMounted = useRef(true);
+  
+  // Set up cleanup function to prevent state updates on unmounted component
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -78,13 +86,17 @@ const QuantaFileUploader = ({ onFileUploaded }) => {
     try {
       // Set up upload with progress tracking
       const progressInterval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 95) {
-            clearInterval(progressInterval);
-            return 95;
-          }
-          return prev + 5;
-        });
+        if (isMounted.current) {
+          setProgress(prev => {
+            if (prev >= 95) {
+              clearInterval(progressInterval);
+              return 95;
+            }
+            return prev + 5;
+          });
+        } else {
+          clearInterval(progressInterval);
+        }
       }, 150);
 
       // Real API call to upload the file
@@ -96,38 +108,48 @@ const QuantaFileUploader = ({ onFileUploaded }) => {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
           );
-          setProgress(percentCompleted);
-          if (percentCompleted === 100) {
-            clearInterval(progressInterval);
+          if (isMounted.current) {
+            setProgress(percentCompleted);
+            if (percentCompleted === 100) {
+              clearInterval(progressInterval);
+            }
           }
         }
       });
 
       clearInterval(progressInterval);
-      setProgress(100);
+      if (isMounted.current) {
+        setProgress(100);
+      }
       console.log("responseeeee :" , response.data.fileData)
       
       toast.success('File uploaded successfully!');
       
       // Pass the uploaded file data back to the parent component
-      if (onFileUploaded && response.data) {
+      if (isMounted.current && onFileUploaded && response.data) {
         onFileUploaded(response.data.fileData);
       }
       
       // Reset after successful upload
       setTimeout(() => {
-        setFile(null);
-        setProgress(0);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+        if (isMounted.current) {
+          setFile(null);
+          setProgress(0);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
         }
       }, 1500);
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Error uploading file';
-      toast.error(errorMessage);
+      if (isMounted.current) {
+        toast.error(errorMessage);
+      }
       console.error('Upload error:', err);
     } finally {
-      setUploading(false);
+      if (isMounted.current) {
+        setUploading(false);
+      }
     }
   };
 

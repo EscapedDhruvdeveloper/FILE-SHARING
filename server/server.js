@@ -1,12 +1,12 @@
+// Load environment variables first
+const dotenv = require('dotenv');
+dotenv.config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const fs = require('fs');
-
-// Load environment variables
-dotenv.config();
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -46,11 +46,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
 }));
 
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
-  next();
-});
+// Request logging middleware for development
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
+    next();
+  });
+}
 
 // Set up JSON and URL encoded middleware with increased limits
 app.use(express.json({ limit: '200mb' }));
@@ -99,6 +101,7 @@ const connectDB = async () => {
   }
 };
 
+// Connect to database
 connectDB();
 
 // Graceful shutdown
@@ -106,6 +109,13 @@ process.on('SIGINT', async () => {
   await mongoose.connection.close();
   console.log('MongoDB connection closed due to app termination');
   process.exit(0);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err, promise) => {
+  console.log(`Error: ${err.message}`);
+  // Close server & exit process
+  // server.close(() => process.exit(1));
 });
 
 // Serve static assets in production

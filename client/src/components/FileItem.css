@@ -1,0 +1,98 @@
+/* File Item Component Styles */
+.file-item {
+  display: flex;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.file-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.file-icon {
+  font-size: 2.5rem;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+}
+
+.file-details {
+  flex: 1;
+}
+
+.file-name {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  color: #333;
+  word-break: break-word;
+}
+
+.file-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.file-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.download-btn, .delete-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.download-btn {
+  background-color: #4285f4;
+  color: white;
+}
+
+.download-btn:hover {
+  background-color: #3367d6;
+}
+
+.download-btn:disabled {
+  background-color: #a1c0fa;
+  cursor: not-allowed;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .file-item {
+    flex-direction: column;
+  }
+  
+  .file-icon {
+    margin-right: 0;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  
+  .file-actions {
+    flex-direction: column;
+  }
+}

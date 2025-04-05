@@ -43,9 +43,8 @@ router.post('/upload', auth, upload.single('file'), fileController.uploadFile);
 // @access  Private
 router.get('/', auth, fileController.getUserFiles);
 
-// IMPORTANT: The download route must come before the :id route to avoid conflicts
-// @route   GET api/files/download/:shortId
-// @desc    Download a file by short ID (public access)
+// @route   GET api/files/download/:fileId
+// @desc    Download a file by ID (public access)
 // @access  Public
 router.get('/download/:fileId', fileController.downloadFile);
 
@@ -89,24 +88,10 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// send file via email
-// @route   POST api/files/email
-// @desc    send file
+// @route   POST api/files/share/email
+// @desc    Share a file via email
 // @access  Private
-
-const storages = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Save files to the 'uploads/' directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); 
-  },
-});
-
-
-const uploads = multer({ storage: storages });
-
-router.post('/email', uploads.none(), fileController.shareFileViaEmail)
+router.post('/share/email', auth, upload.none(), fileController.shareFileViaEmail);
 
 
 module.exports = router;
